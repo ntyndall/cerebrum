@@ -1,5 +1,7 @@
 #' @title Load MNIST
 #'
+#' @details Original data source can be found at \code{http://yann.lecun.com/exdb/mnist/}
+#'
 #' @export
 
 

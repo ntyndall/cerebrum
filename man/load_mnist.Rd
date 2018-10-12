@@ -7,3 +7,6 @@
 load_mnist(dirName = "image-data", dat = "train-images.idx3-ubyte",
   labels = "train-labels.idx1-ubyte")
 }
+\details{
+Original data source can be found at \code{http://yann.lecun.com/exdb/mnist/}
+}

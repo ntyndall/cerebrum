@@ -13,5 +13,6 @@ Imports:
   magrittr,
   purrr,
   utils,
+  matrixcalc,
   crayon
 RoxygenNote: 6.0.1

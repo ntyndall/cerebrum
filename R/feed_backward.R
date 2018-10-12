@@ -28,6 +28,21 @@ feed_backward <- function(forward, res, outputs = matrix(1)) {
   nablaW[[nablaW %>% length]] <- forward$activations[[forward$activations %>% length %>% `-`(1)]] %*% deltaL %>% t()
 
   # Loop over the remaining layers.. (backwards)!
-  # ...
+  # We know that the errors are related by adjacent layers
+  for (i in (res$layers - 2):1) {
+    zval <- forward$wInputs[[i]]
+    sprime <- zval %>% cerebrum::sig(prime = T)
+    nudel <- res$weights[[i + 1]] %>% t %*% deltaL %>% matrixcalc::hadamard.prod(sprime)
+    nablaB[[i]] <- nudel
+    nablaW[[i]] <- nudel %*% (forward$activations[[i]] %>% t)
+    deltaL <- nudel
+  }
 
+  # Return the nabla's back
+  return(
+    list(
+      nablaB = nablaB,
+      nablaW = nablaW
+    )
+  )
 }

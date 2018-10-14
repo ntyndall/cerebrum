@@ -15,6 +15,7 @@ feed_forward <- function(x = matrix(c(1, 2)), res) {
     activations %<>% c(x %>% list)
   }
 
+  # Return weighted inputs and the activation values
   return(
     list(
       activations = activations,

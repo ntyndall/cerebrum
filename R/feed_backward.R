@@ -7,10 +7,9 @@ feed_backward <- function(forward, res, outputs = matrix(1)) {
 
   # Calculate delta in the final layer first
   # i.e. del C . sigma'
-
   nablaC <- forward$activations %>%
     `[[`(forward$activations %>% length) %>%
-    `-`(outs)
+    `-`(outputs)
 
   sigPrime <- forward$wInputs %>%
     `[[`(forward$wInputs %>% length) %>%
@@ -25,7 +24,7 @@ feed_backward <- function(forward, res, outputs = matrix(1)) {
 
   # Put in the very last nablas
   nablaB[[nablaB %>% length]] <- deltaL
-  nablaW[[nablaW %>% length]] <- forward$activations[[forward$activations %>% length %>% `-`(1)]] %*% deltaL %>% t()
+  nablaW[[nablaW %>% length]] <- deltaL %*% (forward$activations[[forward$activations %>% length %>% `-`(1)]] %>% t)
 
   # Loop over the remaining layers.. (backwards)!
   # We know that the errors are related by adjacent layers

@@ -54,15 +54,17 @@ for (i in 1:epochs) {
     nrow %>%
     sample
 
+  batchContrib <- 1:(train.data %>% nrow %>% `/`(batchsize))
+
   new.train <- lapply(
-    X = 1:(train.data %>% nrow %>% `/`(batchsize)),
+    X = batchContrib,
     FUN = function(x) {
       train.data[(((x - 1) * batchsize) + 1):(x * batchsize), ]
     }
   )
 
   new.labels <- lapply(
-    X = 1:(train.data %>% nrow %>% `/`(batchsize)),
+    X = batchContrib,
     FUN = function(x) {
       train.labels[(((x - 1) * batchsize) + 1):(x * batchsize)]
     }

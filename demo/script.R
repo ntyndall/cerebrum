@@ -47,7 +47,7 @@ epochs <- 10
 eta <- 3.0
 
 # Optimize weights + biases
-for (i in epochs) {
+for (i in 1:epochs) {
 
   # Sample the training data
   splitup <- train.data %>%
@@ -72,7 +72,7 @@ for (i in epochs) {
   pb <- utils::txtProgressBar(
     min = 0,
     max = train.data %>% nrow %>% `/`(batchsize),
-    style = 2
+    style = 3
   )
 
   # Gradient descent for all batches
@@ -88,16 +88,21 @@ for (i in epochs) {
   # Now check out the test data (it doesnt need shuffled!)
   totsum <- 0
   for (k in 1:(test.data %>% nrow)) {
+
+  # Calculate the highest feed forward activation
   my_res <- test.data[k, ] %>%
     cerebrum::feed_forward(
       res = res
-    )
-  if (test.labels[[k]][my_res$activations[[3]] %>% as.double %>% which.max, 1] == 1) totsum %<>% `+`(1)
+    ) %>%
+    `[[`("activations") %>%
+    `[[`(3) %>%
+    as.double %>%
+    which.max
+
+   # If it matches then increment the count!
+   if (test.labels[[k]][my_res, 1] == 1) totsum %<>% `+`(1)
   }
 
-  print(paste0("Epoch ", i, " : ", totsum / (test.data %>% nrow)))
+  cat(paste0("Epoch ", i, " : ", totsum / (test.data %>% nrow)), "\n")
 
 }
-
-
-

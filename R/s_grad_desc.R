@@ -3,7 +3,7 @@
 #' @export
 
 
-s_grad_desc <- function(res, xs, ys, size, eta = 0.05) {
+s_grad_desc <- function(res, xs, ys, eta = 0.05) {
 
   # Set up empty matrices
   nabW <- res$weights %>% cerebrum::zero_mat()
@@ -14,20 +14,20 @@ s_grad_desc <- function(res, xs, ys, size, eta = 0.05) {
   for (i in 1:(xs %>% nrow)) {
     backwards <- res %>%
       cerebrum::backprop(
-        x = xs,
-        y = ys
+        x = xs[i, ],
+        y = ys[[i]]
       )
 
     # Update nablaW
     nabW <- lapply(
       X = nabLen,
-      FUN = function(x) nabW[[x]] %>% `+`(backward$nablaW[[x]])
+      FUN = function(x) nabW[[x]] %>% `+`(backwards$nablaW[[x]])
     )
 
     # Update nablaB
     nabB <- lapply(
       X = nabLen,
-      FUN = function(x) nabB[[x]] %>% `+`(backward$nablaB[[x]])
+      FUN = function(x) nabB[[x]] %>% `+`(backwards$nablaB[[x]])
     )
   }
 

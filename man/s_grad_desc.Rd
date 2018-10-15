@@ -4,5 +4,5 @@
 \alias{s_grad_desc}
 \title{Stochastic Gradient Descent}
 \usage{
-s_grad_desc(res, xs, ys, size, eta = 0.05)
+s_grad_desc(res, xs, ys, eta = 0.05)
 }

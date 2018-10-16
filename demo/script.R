@@ -14,7 +14,7 @@ res <- c(my.data$train %>% ncol, 30, my.data$labels.tr[[1]] %>% nrow) %>%
   cerebrum::nnetwork()
 
 # Test data
-res %>% cerebrum::optimize_and_test(
-  my.data = my.data
-)
-
+result.frame <- res %>%
+  cerebrum::optimize_and_test(
+    my.data = my.data
+  )

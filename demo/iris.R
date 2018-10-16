@@ -23,15 +23,15 @@ data.set <- list(
 my.data <- data.set %>%
   cerebrum::update_data()
 
-
 # Initialise a neural network with a single hidden layer (with 5 neurons)!
 res <- c(my.data$train %>% ncol, 10, my.data$labels.tr[[1]] %>% nrow) %>%
   cerebrum::nnetwork()
 
 # Optimize weights + biases
-res %>% cerebrum::optimize_and_test(
-  my.data = my.data,
-  batchsize = 10,
-  eta = 3.0,
-  epochs = 40
-)
+result.frame <- res %>%
+  cerebrum::optimize_and_test(
+    my.data = my.data,
+    batchsize = 10,
+    eta = 3.0,
+    epochs = 40
+  )

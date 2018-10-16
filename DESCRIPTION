@@ -14,5 +14,7 @@ Imports:
   purrr,
   utils,
   matrixcalc,
-  crayon
+  crayon,
+  dplyr,
+  datasets
 RoxygenNote: 6.0.1

@@ -4,6 +4,5 @@
 \alias{optimize_and_test}
 \title{Optimize And Test}
 \usage{
-optimize_and_test(res, train.data, train.labels, test.data, test.labels,
-  batchsize = 10, eta = 3, epochs = 10)
+optimize_and_test(res, my.data, batchsize = 10, eta = 3, epochs = 10)
 }

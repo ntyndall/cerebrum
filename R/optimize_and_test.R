@@ -3,8 +3,13 @@
 #' @export
 
 
-optimize_and_test <- function(res, train.data, train.labels, test.data, test.labels,
-                              batchsize = 10, eta = 3.0, epochs = 10) {
+optimize_and_test <- function(res, my.data, batchsize = 10, eta = 3.0, epochs = 10) {
+
+  # Set up function for splitting up the data sets
+  batches <- cerebrum::calc_batches(
+    datRow = my.data$train %>% nrow,
+    batchsize = batchsize
+  )
 
   for (i in 1:epochs) {
 
@@ -13,45 +18,41 @@ optimize_and_test <- function(res, train.data, train.labels, test.data, test.lab
       nrow %>%
       sample
 
-    batchContrib <- 1:(train.data %>% nrow %>% `/`(batchsize))
+    # Subset data by batch
+    new.train <- batches %>% lapply(FUN = function(x) my.data$train[x, ])
+    new.labels <- batches %>% lapply(FUN = function(x) my.data$labels.tr[x])
 
-    new.train <- lapply(
-      X = batchContrib,
-      FUN = function(x) {
-        train.data[(((x - 1) * batchsize) + 1):(x * batchsize), ]
-      }
-    )
-
-    new.labels <- lapply(
-      X = batchContrib,
-      FUN = function(x) {
-        train.labels[(((x - 1) * batchsize) + 1):(x * batchsize)]
-      }
-    )
+    # Iterations of batches
+    batchIter <- my.data$train %>%
+      nrow %>%
+      `/`(batchsize) %>%
+      floor
 
     # Set up progress bar
     pb <- utils::txtProgressBar(
       min = 0,
-      max = train.data %>% nrow %>% `/`(batchsize),
+      max = batchIter,
       style = 3
     )
 
     # Gradient descent for all batches
-    for (k in 1:(train.data %>% nrow %>% `/`(batchsize))) {
+    for (k in 1:batchIter) {
       res %<>% cerebrum::s_grad_desc(
         xs = new.train[[k]],
         ys = new.labels[[k]],
         eta = eta
       )
-      utils::setTxtProgressBar(pb, value = k)
+
+      # Update progress bar
+      pb %>% utils::setTxtProgressBar(k)
     }
 
     # Now check out the test data (it doesnt need shuffled!)
     totsum <- 0
-    for (k in 1:(test.data %>% nrow)) {
+    for (k in 1:(my.data$test %>% nrow)) {
 
       # Calculate the highest feed forward activation
-      my_res <- test.data[k, ] %>%
+      my_res <- my.data$test[k, ] %>%
         cerebrum::feed_forward(
           res = res
         ) %>%
@@ -61,9 +62,9 @@ optimize_and_test <- function(res, train.data, train.labels, test.data, test.lab
         which.max
 
       # If it matches then increment the count!
-      if (test.labels[[k]][my_res, 1] == 1) totsum %<>% `+`(1)
+      if (my.data$labels.te[[k]][my_res, 1] == 1) totsum %<>% `+`(1)
     }
 
-    cat(paste0(" \n ## Epoch ", i, " : ", totsum / (test.data %>% nrow)), "\n")
+    cat(paste0(" \n  |= Epoch ", i, " : ", totsum / (my.data$test %>% nrow)), "\n\n")
   }
 }

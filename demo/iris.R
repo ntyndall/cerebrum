@@ -30,10 +30,7 @@ res <- c(my.data$train %>% ncol, 10, my.data$labels.tr[[1]] %>% nrow) %>%
 
 # Optimize weights + biases
 res %>% cerebrum::optimize_and_test(
-  train.data = my.data$train,
-  train.labels = my.data$labels.tr,
-  test.data = my.data$test,
-  test.labels = my.data$labels.te,
+  my.data = my.data,
   batchsize = 10,
   eta = 3.0,
   epochs = 40

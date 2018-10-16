@@ -15,9 +15,6 @@ res <- c(my.data$train %>% ncol, 30, my.data$labels.tr[[1]] %>% nrow) %>%
 
 # Test data
 res %>% cerebrum::optimize_and_test(
-  train.data = my.data$train,
-  train.labels = my.data$labels.tr,
-  test.data = my.data$test,
-  test.labels = my.data$labels.te
+  my.data = my.data
 )
 

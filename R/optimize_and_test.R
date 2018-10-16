@@ -11,6 +11,10 @@ optimize_and_test <- function(res, my.data, batchsize = 10, eta = 3.0, epochs = 
     batchsize = batchsize
   )
 
+  # Initialise result frame
+  result.frame <- data.frame(stringsAsFactors = F)
+
+  # Loop over all epochs while performing optimization
   for (i in 1:epochs) {
 
     # Sample the training data
@@ -65,6 +69,25 @@ optimize_and_test <- function(res, my.data, batchsize = 10, eta = 3.0, epochs = 
       if (my.data$labels.te[[k]][my_res, 1] == 1) totsum %<>% `+`(1)
     }
 
-    cat(paste0(" \n  |= Epoch ", i, " : ", totsum / (my.data$test %>% nrow)), "\n\n")
+    # Percentage
+    totsum %<>%
+      `/`(my.data$test %>% nrow) %>%
+      round(digits = 4) %>%
+      `*`(100)
+
+    # Print to screen
+    cat(paste0(" \n  |= Epoch ", i, " : ", totsum, "\n\n"))
+
+    # Append to result frame
+    result.frame %<>% rbind(
+      data.frame(
+        epoch = i,
+        percentage = totsum,
+        stringsAsFactors = F
+      )
+    )
   }
+
+  # Return the results frame
+  return(result.frame)
 }

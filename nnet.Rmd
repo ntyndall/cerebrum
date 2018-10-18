@@ -1,0 +1,54 @@
+---
+title: "Building a simple neural network in R"
+output: html_document
+header-includes:
+- \usepackage{booktabs}
+---
+
+```{r, echo=FALSE, message=FALSE}
+# Load libraries and read data
+library(DiagrammeR)
+library(cerebrum)
+library(purrr)
+library(magrittr)
+```
+
+# Introduction
+The idea of this report is to try and build up a neural network from scratch in R, gaining an understanding of how the algorithm works and how it is used to predict unseen data. We will try to avoid much of the mathematical concepts in a great deal of rigour, and attempt to provide the concept through doing. There are some excellent documents and explanations of why things are the way they are online, and this is not the purpose of this report.
+
+So, what is a neural network and why should I care? It is a system made up of multiple neurons, where a neuron can be thought of simply as some function. In the sense that a neuron takes some input, processes that information in a way, and spits out its result based on how it regards that input.
+
+
+```{r, echo=FALSE}
+DiagrammeR::grViz(
+  "digraph dot {
+
+    graph [layout = dot,
+           rankdir = LR]
+    
+    node [shape = circle,
+          style = filled,
+          color = black,
+          label = '']
+    
+    node [fillcolor = white,
+          color = white]
+    a b c
+    
+    node [fillcolor = white,
+          color = black]
+    d
+
+    node [fillcolor = white,
+          color = white]
+    e
+    
+    edge [color = black]
+    {a b c} -> d
+    d -> {e}
+  }",
+  width = 400,
+  height = 400
+)
+```
+

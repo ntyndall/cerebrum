@@ -18,7 +18,6 @@ The idea of this report is to try and build up a neural network from scratch in 
 
 So, what is a neural network and why should I care? It is a system made up of multiple neurons, where a neuron can be thought of simply as some function. In the sense that a neuron takes some input, processes that information in a way, and spits out its result based on how it regards that input.
 
-
 ```{r, echo=FALSE}
 DiagrammeR::grViz(
   "digraph dot {
@@ -52,3 +51,10 @@ DiagrammeR::grViz(
 )
 ```
 
+As mentioned earlier, a neural network is comprised of these _neurons_, in multiple layers. Therefore they can be arranged in multiple ways, for example;
+
+# Theory and Equations
+Before we go any further, let us develop some key points and notions that will help us understand at least what is happening when building and learning a neural network.
+
+# Worked Example
+Now that we have introduced some ideas and terminology, we will propagate through the neural network by example for a single iteration, to see what is actually happening when we scale this up. Hopefully after going through the example, the equations in the previous section will begin to make more sense, at least in terms of what they mean in the bigger picture.

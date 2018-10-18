@@ -58,5 +58,4 @@ update_data <- function(data.set, splitPer = 0.75) {
       labels.te = newLabels[(trNum + 1):data.set$num]
     )
   )
-
 }

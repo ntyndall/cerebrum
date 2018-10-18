@@ -12,6 +12,7 @@ LazyData: true
 Imports:
   magrittr,
   purrr,
+  DiagrammeR,
   utils,
   matrixcalc,
   crayon,

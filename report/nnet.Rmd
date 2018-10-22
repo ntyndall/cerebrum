@@ -23,14 +23,14 @@ The idea of this report is to try and build up a neural network from scratch in 
 So, what is a neural network and why should I care? It is a system made up of multiple neurons, where a neuron can be thought of simply as some function. In the sense that a neuron takes some input, processes that information in a way, and spits out its result based on how it regards that input.
 
 ```{r echo=FALSE, out.width='100%'}
-knitr::include_graphics(path = "./neural_neuron.pdf")
+knitr::include_graphics(path = "./images/neural_neuron.pdf")
 ```
 
 As mentioned earlier, a neural network is comprised of these _neurons_, in multiple layers. Therefore they can be arranged in multiple ways, for example;
 
 ```{r echo=FALSE, out.width='100%'}
 print('image here')
-#knitr::include_graphics(path = "./simple.svg")
+#knitr::include_graphics(path = "./images/simple.pdf")
 ```
 
 # Theory and Equations
@@ -61,12 +61,12 @@ $$
 where we define the first layer as the input layer (usually the input of your data set), the last layer as the output layer (for example, the number of output neurons can be the number of classes during classification of your data). And finally, any 
 
 
-```{r echo=FALSE, out.width='50%', dev='pdf'}
+```{r echo=FALSE, out.width='50%'}
 print('image here')
-#knitr::include_graphics(path = "./neural_part3.svg")
+#knitr::include_graphics(path = "./images/neural_part3.pdf")
 ```
 
-```{r echo=FALSE, out.width='50%', dev='pdf'}
+```{r echo=FALSE, out.width='50%'}
 print('image here')
-#knitr::include_graphics(path = "neural_part4.svg")
+#knitr::include_graphics(path = "./images/neural_part4.pdf")
 ```

@@ -14,7 +14,9 @@ header-includes:
 # Load libraries and read data
 library(DiagrammeR)
 library(cerebrum)
+library(ggplot2)
 library(purrr)
+library(pdata)
 library(magrittr)
 ```
 
@@ -45,6 +47,24 @@ $$
 \sigma(z) = \frac{1}{1 + e^{-z}}
 $$
 The summation above is over the number of neurons in each layer, which will hopefully make sense when covering the worked example. It is simply just the product of all the weights and their respective activations of the previous layer, with an additional term to account for the bias of each neuron. So the activations, as stated above, for layer 2 are calculated using the input vector from the input layer, i.e. $a^{1}_{j} \equiv x_{j}$.
+
+```{r, echo=FALSE, out.width='75%', fig.align='center'}
+inp <- seq(from = -10, to = 10, by = 0.001)
+df <- data.frame(x = inp, y = inp %>% cerebrum::sig(), stringsAsFactors = F)
+
+# Plot the sigma function
+g <- ggplot2::ggplot(data = df, ggplot2::aes(x, y)) %>%
+  `+`(ggplot2::geom_line())
+g
+```
+
+Once we calculate all the activations at each neuron, the most important will be those that are in the output layer. The highest activation means that neuron will be firing for a given set of input parameters. In order to measure the accuracy, a cost function is introduced, which is defined as,
+$$
+C(x) = \frac{1}{2n}\sum_{i = 1}^{T} || y(x) - a^{L}(x)||^{2}
+$$
+which is really just a mean squared error function. Therefore the result is really a comparison between the actual output values and the final activation layer output values. This gives us some idea of the error of our neural network and provides some feedback mechanism for optimizing at a later stage. The summation is over all training data ($T$), and the cost is a function of the input parameters for each training data.
+
+
 
 # Worked Example
 We initiate a neural network with 4 layers, with 2 input neurons and 2 output neurons. The hidden layers consist of 3 and 4 layers. We will introduce the weights and biases at each stage of the calculation, otherwise the network would look overwhelming.
@@ -82,7 +102,7 @@ a^{3}_{4} = \sigma(\textcolor{orange}{(0.7 \times 0.8581) + (0.3 \times 0.9644) 
 $$
 
 ### Layer 4
-```{r echo=FALSE, out.width='80%', fig.align='center'  }
+```{r echo=FALSE, out.width='80%', fig.align='center'}
 knitr::include_graphics(path = "./images/neural_part4.pdf")
 ```
 
@@ -101,7 +121,7 @@ The following work and equations can be used for the cost function, $C(x)$ as de
 ### Kickstarting the algorithm
 To start the algorithm, we calculate the first value, $\delta^{L}$, where we are using our total number of layers as $L = 4$.
 $$
-\delta^{4} = (a^{4} - o) \odot \sigma'(z^4) = 
+\delta^{4} = (a^{4} - o) \odot \sigma^{\prime} (z^4) =
 \Big(\begin{bmatrix} 0.7104 \\ 0.9468 \end{bmatrix} - \begin{bmatrix} 0 \\ 1 \end{bmatrix} \Big) \odot \sigma'\Big(\begin{bmatrix} 0.8971 \\ 2.8784 \end{bmatrix}\Big) =
 \begin{bmatrix} 0.1462 \\ -0.002681 \end{bmatrix}
 $$
@@ -111,7 +131,7 @@ $$
 $$
 
 $$
-\frac{\partial C}{\partial w^{4}} = \delta^4 \cdot (a^{3})^{T} = \begin{bmatrix} 0.1165 & 0.1024 & 0.1123 & 0.1319 \\ -0.00214 & -0.00187 & -0.00206 & -0.00242 \end{bmatrix}
+\frac{\partial C}{\partial w^{4}} = \delta^4 \cdot (a^{3})^{\top} = \begin{bmatrix} 0.1165 & 0.1024 & 0.1123 & 0.1319 \\ -0.00214 & -0.00187 & -0.00206 & -0.00242 \end{bmatrix}
 $$
 ### Remaining Layers
 Now, by using the the $\delta$ recurrence relation, linking delta's in adjacent layers, we can use $\delta^4$ from above and calculate the remaining changes in the weights and biases. The calculation is as follows;

@@ -47,7 +47,9 @@ $$
 The summation above is over the number of neurons in each layer, which will hopefully make sense when covering the worked example. It is simply just the product of all the weights and their respective activations of the previous layer, with an additional term to account for the bias of each neuron. So the activations, as stated above, for layer 2 are calculated using the input vector from the input layer, i.e. $a^{1}_{j} \equiv x_{j}$.
 
 # Worked Example
-Now that we have introduced some ideas and terminology, we will propagate through the neural network by example for a single iteration, to see what is actually happening when we scale this up. Hopefully after going through the example, the equations in the previous section will begin to make more sense, at least in terms of what they mean in the bigger picture.
+We initiate a neural network with 4 layers, with 2 input neurons and 2 output neurons. The hidden layers consist of 3 and 4 layers. We will introduce the weights and biases at each stage of the calculation, otherwise the network would look overwhelming.
+
+Now that we have introduced some ideas and terminology, we will propagate through the neural network by example for a single iteration, to see what is actually happening when we scale this up. Hopefully after going through the example, the equations in the previous section will begin to make more sense, at least in terms of what they mean in the bigger picture. We start by taking the definition of $$a^{i}_{j}$$, and calculate these for layers 2, 3, and 4.
 
 ### Activation functions
 $$

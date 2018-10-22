@@ -53,7 +53,7 @@ Now that we have introduced some ideas and terminology, we will propagate throug
 
 \newpage 
 
-## Activation functions
+## Activations (Feedforward)
 ### Layer 2
 ```{r echo=FALSE, out.width='80%', fig.align='center'}
 knitr::include_graphics(path = "./images/neural_part2.pdf")
@@ -91,4 +91,31 @@ $$
 a^{4}_{1} = \sigma(\textcolor{blue}{(0.3 \times 0.7974) + (0.1 \times 0.7005) + (0.4 \times 0.7683) + (0.2 \times 0.9024) + 0.1}) = \sigma(0.8971) \approx 0.7103 \\
 a^{4}_{2} = \sigma(\textcolor{red}{(0.6 \times 0.7974) + (0.9 \times 0.7005) + (0.7 \times 0.7683) + (0.7 \times 0.9024) + 0.6}) = \sigma(0.9468) \approx 0.9468
 \end{split}
+$$
+
+## Backpropagation
+Now that we have calculated all the activations at each neuron for a single iteration, we can finally apply the backpropagation algorithm to calculate the delta' and therefore any changes that need to be made to the weights and biases in order to reach the desired output vectors for each corresponding piece of input.
+
+The following work and equations can be used for the cost function, $C(x)$ as defined before. 
+
+### Kickstarting the algorithm
+To start the algorithm, we calculate the first value, $\delta^{L}$, where we are using our total number of layers as $L = 4$.
+$$
+\delta^{4} = (a^{4} - o) \odot \sigma'(z^4) = 
+\Big(\begin{bmatrix} 0.7104 \\ 0.9468 \end{bmatrix} - \begin{bmatrix} 0 \\ 1 \end{bmatrix} \Big) \odot \sigma'\Big(\begin{bmatrix} 0.8971 \\ 2.8784 \end{bmatrix}\Big) =
+\begin{bmatrix} 0.1462 \\ -0.002681 \end{bmatrix}
+$$
+This gives us the ability to calculate the changes in the biases and weights,
+$$
+\frac{\partial C}{\partial b^{4}} = \begin{bmatrix} 0.1462 \\ -0.002681 \end{bmatrix}
+$$
+
+$$
+\frac{\partial C}{\partial w^{4}} = \delta^4 \cdot (a^{3})^{T} = \begin{bmatrix} 0.1165 & 0.1024 & 0.1123 & 0.1319 \\ -0.00214 & -0.00187 & -0.00206 & -0.00242 \end{bmatrix}
+$$
+### Remaining Layers
+Now, by using the the $\delta$ recurrence relation, linking delta's in adjacent layers, we can use $\delta^4$ from above and calculate the remaining changes in the weights and biases. The calculation is as follows;
+
+$$
+...
 $$

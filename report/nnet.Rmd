@@ -17,6 +17,8 @@ library(cerebrum)
 library(ggplot2)
 library(purrr)
 library(pdata)
+library(extrafont)
+library(extrafontdb)
 library(magrittr)
 ```
 
@@ -48,13 +50,14 @@ $$
 $$
 The summation above is over the number of neurons in each layer, which will hopefully make sense when covering the worked example. It is simply just the product of all the weights and their respective activations of the previous layer, with an additional term to account for the bias of each neuron. So the activations, as stated above, for layer 2 are calculated using the input vector from the input layer, i.e. $a^{1}_{j} \equiv x_{j}$.
 
-```{r, echo=FALSE, out.width='75%', fig.align='center'}
+```{r, echo=FALSE, warning=FALSE, out.width='75%', fig.align='center'}
 inp <- seq(from = -10, to = 10, by = 0.001)
 df <- data.frame(x = inp, y = inp %>% cerebrum::sig(), stringsAsFactors = F)
 
 # Plot the sigma function
 g <- ggplot2::ggplot(data = df, ggplot2::aes(x, y)) %>%
-  `+`(ggplot2::geom_line())
+  `+`(ggplot2::geom_line()) %>%
+  `+`(pdata::plot_theme())
 g
 ```
 

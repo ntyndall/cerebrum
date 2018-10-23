@@ -63,11 +63,22 @@ g
 
 Once we calculate all the activations at each neuron, the most important will be those that are in the output layer. The highest activation means that neuron will be firing for a given set of input parameters. In order to measure the accuracy, a cost function is introduced, which is defined as,
 $$
-C(x) = \frac{1}{2n}\sum_{i = 1}^{T} || y(x) - a^{L}(x)||^{2}
+C(x) = \frac{1}{2n}\sum_{i = 1}^{T} || y(x) - a^{l_N}(x)||^{2} \approx \frac{1}{n}\sum^{T}_{i=1}C_i
 $$
-which is really just a mean squared error function. Therefore the result is really a comparison between the actual output values and the final activation layer output values. This gives us some idea of the error of our neural network and provides some feedback mechanism for optimizing at a later stage. The summation is over all training data ($T$), and the cost is a function of the input parameters for each training data.
+which is really just a mean squared error function. We have used the assumption that this cost can be approximated by taking the average of individual training examples, i.e. each training example is just $C_i = \frac{1}{2}||y(x) - a^{l_N}(x)||^2$. Therefore the result is really a comparison between the actual output values and the final activation layer output values. This gives us some idea of the error of our neural network and provides some feedback mechanism for optimizing at a later stage. The summation is over all training data ($T$), and the cost is a function of the input parameters for each training data.
 
+Up to now, there is no real way to know how to adjust any of the values to optimise the classification. In order to do so we assume that $C(x)$ isn't so rigid, and allow for a small deviation in its value, i.e. $C(x)\rightarrow C(x) + \Delta C(x)$. By introducing this value, we can propagate the error throughout the network, so that small changes in the weights and biases will account for this $\Delta C(x)$.
 
+### Backpropagation Equations
+The following four equations are all that are required to apply the backpropagation algorithm in order to adjust the weights and biases. Note that the first equation is applied to kick things off, the second equation combines $\delta$'s in adjacent layers (flowing backwards), and finally, the partial derivatives with respect to the baises and weights are the quantities required in order to optimise them. See the worked example section to compute all these components. We will see later that we can just drop the $j$ indexes, and write out the matrices in each layer.
+$$
+\begin{split}
+\delta_j^{l_N} &= \frac{\partial C}{\partial a_j^{l_N}} \odot \sigma^{\prime}(z^{l_N}_j) \\
+\delta^l_j &= ((w_{jk}^{l+1})^{\top}\delta_j^{l+1}) \odot \sigma^{\prime}(z_j^l) \\
+\frac{\partial C}{\partial b_j^l} &= \delta_j^l \\
+\frac{\partial C}{\partial w_{jk}^l} &= a^{l - 1}_k\delta_j^l
+\end{split}
+$$
 
 # Worked Example
 We initiate a neural network with 4 layers, with 2 input neurons and 2 output neurons. The hidden layers consist of 3 and 4 layers. We will introduce the weights and biases at each stage of the calculation, otherwise the network would look overwhelming.
@@ -122,7 +133,7 @@ Now that we have calculated all the activations at each neuron for a single iter
 The following work and equations can be used for the cost function, $C(x)$ as defined before. 
 
 ### Kickstarting the algorithm
-To start the algorithm, we calculate the first value, $\delta^{L}$, where we are using our total number of layers as $L = 4$.
+To start the algorithm, we calculate the first value, $\delta^{N_l}$, where we are using our total number of layers as $N_l = 4$, and also dropping the $j$ component, we can write this out in matrix form.
 $$
 \delta^{4} = (a^{4} - o) \odot \sigma^{\prime} (z^4) =
 \Big(\begin{bmatrix} 0.7104 \\ 0.9468 \end{bmatrix} - \begin{bmatrix} 0 \\ 1 \end{bmatrix} \Big) \odot \sigma'\Big(\begin{bmatrix} 0.8971 \\ 2.8784 \end{bmatrix}\Big) =
@@ -136,6 +147,42 @@ $$
 $$
 \frac{\partial C}{\partial w^{4}} = \delta^4 \cdot (a^{3})^{\top} = \begin{bmatrix} 0.1165 & 0.1024 & 0.1123 & 0.1319 \\ -0.00214 & -0.00187 & -0.00206 & -0.00242 \end{bmatrix}
 $$
+The above is a handy matrix form for calculating $\frac{\partial C}{\partial w^{l}_{jk}}$. A handy way of figuring out the dimension is by taking the number of neurons in the $l^{\text{th}}$ and $(l - 1)^{\text{th}}$ layers. So by looking at our network, this will simply be ($2\times 4$). The above also looks a little different to the original definition, but we could have also written all this out in full, where $j = [1, 2]$ and $k = [1, 2, 3, 4]$. i.e. where $k$ and $j$ are as defined previously as the number of neurons in the $l^{\text{th}}$ and $(l - 1)^{\text{th}}$ layers respectively. So, writing out all the components in accordance to the last equation of the set of backpropagation equations,
+$$
+\begin{split}
+\frac{\partial C}{\partial w_{11}^{4}} &= a^{3}_{1}\delta^{4}_{1}, ~~
+\frac{\partial C}{\partial w_{12}^{4}} = a^{3}_{2}\delta^{4}_{1}, ~~ 
+\frac{\partial C}{\partial w_{13}^{4}} = a^{3}_{3}\delta^{4}_{1}, ~~
+\frac{\partial C}{\partial w_{14}^{4}} = a^{3}_{4}\delta^{4}_{1}, \\
+\frac{\partial C}{\partial w_{21}^{4}} &= a^{3}_{1}\delta^{4}_{2}, ~~
+\frac{\partial C}{\partial w_{22}^{4}} = a^{3}_{2}\delta^{4}_{2}, ~~ 
+\frac{\partial C}{\partial w_{23}^{4}} = a^{3}_{3}\delta^{4}_{2}, ~~
+\frac{\partial C}{\partial w_{24}^{4}} = a^{3}_{4}\delta^{4}_{2}
+\end{split}
+$$
+Now, for simplicity we set $\frac{\partial C}{\partial w_{jk}^{l}} \equiv \tilde{w}_{jk}^{l}$. Therefore, we can cast all the components above as
+$$
+\begin{bmatrix} 
+\tilde{w}_{11}^{4} & \tilde{w}_{12}^{4} & \tilde{w}_{13}^{4} & \tilde{w}_{14}^{4} \\ 
+\tilde{w}_{21}^{4} & \tilde{w}_{22}^{4} & \tilde{w}_{23}^{4} & \tilde{w}_{24}^{4} 
+\end{bmatrix}
+ = 
+ \begin{bmatrix} 
+\delta^{4}_{1}a^{3}_{1} & \delta^{4}_{1}a^{3}_{2} & \delta^{4}_{1}a^{3}_{3} & \delta^{4}_{1}a^{3}_{4} \\ 
+\delta^{4}_{2}a^{3}_{1} & \delta^{4}_{2}a^{3}_{2} & \delta^{4}_{2}a^{3}_{3} & \delta^{4}_{2}a^{3}_{4} 
+\end{bmatrix}
+= 
+ \begin{bmatrix} 
+\delta^{4}_{1} \\ 
+\delta^{4}_{2}
+\end{bmatrix}
+ \begin{bmatrix} 
+a^{3}_{1} & a^{3}_{2} & a^{3}_{3} & a^{3}_{4}
+\end{bmatrix}
+= \delta^4 \cdot (a^{3})^{\top}
+$$
+
+
 ### Remaining Layers
 Now, by using the the $\delta$ recurrence relation, linking delta's in adjacent layers, we can use $\delta^4$ from above and calculate the remaining changes in the weights and biases. The calculation is as follows;
 

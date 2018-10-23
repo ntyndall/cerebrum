@@ -46,7 +46,7 @@ a^{i}_{j} = \sigma\Big(\sum^{l_{i}}_{k=1}w^{i}_{jk}a^{i-1}_{k} + b^{i}_{j}\Big) 
 $$
 where $\sigma$ is known as the activation function, which for the purposes here we will choose to be a sigmoid function defined as,
 $$
-\sigma(z) = \frac{1}{1 + e^{-z}}
+\sigma(\phi) = \frac{1}{1 + e^{-\phi}}
 $$
 The summation above is over the number of neurons in each layer, which will hopefully make sense when covering the worked example. It is simply just the product of all the weights and their respective activations of the previous layer, with an additional term to account for the bias of each neuron. So the activations, as stated above, for layer 2 are calculated using the input vector from the input layer, i.e. $a^{1}_{j} \equiv x_{j}$.
 
@@ -63,9 +63,9 @@ g
 
 Once we calculate all the activations at each neuron, the most important will be those that are in the output layer. The highest activation means that neuron will be firing for a given set of input parameters. In order to measure the accuracy, a cost function is introduced, which is defined as,
 $$
-C(x) = \frac{1}{2n}\sum_{i = 1}^{T} || y(x) - a^{l_N}(x)||^{2} \approx \frac{1}{n}\sum^{T}_{i=1}C_i
+C(x) = \frac{1}{2n}\sum_{i = 1}^{T} || o(x) - a^{l_N}(x)||^{2} \approx \frac{1}{n}\sum^{T}_{i=1}C_i
 $$
-which is really just a mean squared error function. We have used the assumption that this cost can be approximated by taking the average of individual training examples, i.e. each training example is just $C_i = \frac{1}{2}||y(x) - a^{l_N}(x)||^2$. Therefore the result is really a comparison between the actual output values and the final activation layer output values. This gives us some idea of the error of our neural network and provides some feedback mechanism for optimizing at a later stage. The summation is over all training data ($T$), and the cost is a function of the input parameters for each training data.
+which is really just a mean squared error function. We have used the assumption that this cost can be approximated by taking the average of individual training examples, i.e. each training example is just $C_i = \frac{1}{2}||o(x) - a^{l_N}(x)||^2$. Therefore the result is really a comparison between the actual output values and the final activation layer output values. This gives us some idea of the error of our neural network and provides some feedback mechanism for optimizing at a later stage. The summation is over all training data ($T$), and the cost is a function of the input parameters for each training data.
 
 Up to now, there is no real way to know how to adjust any of the values to optimise the classification. In order to do so we assume that $C(x)$ isn't so rigid, and allow for a small deviation in its value, i.e. $C(x)\rightarrow C(x) + \Delta C(x)$. By introducing this value, we can propagate the error throughout the network, so that small changes in the weights and biases will account for this $\Delta C(x)$.
 
@@ -73,8 +73,8 @@ Up to now, there is no real way to know how to adjust any of the values to optim
 The following four equations are all that are required to apply the backpropagation algorithm in order to adjust the weights and biases. Note that the first equation is applied to kick things off, the second equation combines $\delta$'s in adjacent layers (flowing backwards), and finally, the partial derivatives with respect to the baises and weights are the quantities required in order to optimise them. See the worked example section to compute all these components. We will see later that we can just drop the $j$ indexes, and write out the matrices in each layer.
 $$
 \begin{split}
-\delta_j^{l_N} &= \frac{\partial C}{\partial a_j^{l_N}} \odot \sigma^{\prime}(z^{l_N}_j) \\
-\delta^l_j &= ((w_{jk}^{l+1})^{\top}\delta_j^{l+1}) \odot \sigma^{\prime}(z_j^l) \\
+\delta_j^{l_N} &= \frac{\partial C}{\partial a_j^{l_N}} \odot \sigma^{\prime}(\phi^{l_N}_j) \\
+\delta^l_j &= ((w_{jk}^{l+1})^{\top}\delta_j^{l+1}) \odot \sigma^{\prime}(\phi_j^l) \\
 \frac{\partial C}{\partial b_j^l} &= \delta_j^l \\
 \frac{\partial C}{\partial w_{jk}^l} &= a^{l - 1}_k\delta_j^l
 \end{split}
@@ -93,6 +93,7 @@ Now that we have introduced some ideas and terminology, we will propagate throug
 knitr::include_graphics(path = "./images/neural_part2.pdf")
 ```
 
+Resulting in the following activations,
 $$
 \begin{split}
 a^{2}_{1} = \sigma(\textcolor{blue}{(0.2 \times 1) + (0.4 \times 3) + 0.4}) = \sigma(1.8) \approx 0.8581 \\
@@ -100,19 +101,28 @@ a^{2}_{2} = \sigma(\textcolor{red}{(0.1 \times 1) + (0.8 \times 3) + 0.8}) = \si
 a^{2}_{3} = \sigma(\textcolor{green}{(0.3 \times 1) + (0.1 \times 3) + 0.1}) = \sigma(0.7) \approx 0.6682
 \end{split}
 $$
-
+Therefore we have,
+$$
+\phi^2 = \begin{bmatrix} 1.8 \\ 3.3 \\ 0.7 \\ \end{bmatrix}, ~~~ a^2 = \begin{bmatrix} 0.8581 \\ 0.9644 \\ 0.6682 \\ \end{bmatrix}
+$$
 ### Layer 3
 ```{r echo=FALSE, out.width='80%', fig.align='center'}
 knitr::include_graphics(path = "./images/neural_part3.pdf")
 ```
 
+Resulting in the following activations,
 $$
 \begin{split}
 a^{3}_{1} = \sigma(\textcolor{blue}{(0.3 \times 0.8581) + (0.6 \times 0.9644) + (0.5 \times 0.6682) + 0.2}) = \sigma(1.3702) \approx 0.7974 \\
 a^{3}_{2} = \sigma(\textcolor{red}{(0.1 \times 0.8581) + (0.1 \times 0.9644) + (0.4 \times 0.6682) + 0.4}) = \sigma(0.8495) \approx 0.7005 \\
 a^{3}_{3} = \sigma(\textcolor{green}{(0.9 \times 0.8581) + (0.2 \times 0.9644) + (0.2 \times 0.6682) + 0.1}) = \sigma(1.1988) \approx 0.7683 \\
-a^{3}_{4} = \sigma(\textcolor{orange}{(0.7 \times 0.8581) + (0.3 \times 0.9644) + (0.8 \times 0.6682) + 0.8}) = \sigma(2.2246) \approx 0.9024
+a^{3}_{4} = \sigma(\textcolor{orange}{(0.7 \times 0.8581) + (0.3 \times 0.9644) + (0.8 \times 0.6682) + 0.8}) = \sigma() \approx 0.9024
 \end{split}
+$$
+Therefore we have,
+$$
+\phi^2 = \begin{bmatrix} 1.3702 \\ 0.8495 \\ 1.1988 \\ 2.2246 \\ \end{bmatrix}, ~~~ 
+a^2 = \begin{bmatrix} 0.7974 \\ 0.7005 \\ 0.7683 \\ 0.9024 \\ \end{bmatrix}
 $$
 
 ### Layer 4
@@ -120,11 +130,16 @@ $$
 knitr::include_graphics(path = "./images/neural_part4.pdf")
 ```
 
+Resulting in the following activations,
 $$
 \begin{split}
 a^{4}_{1} = \sigma(\textcolor{blue}{(0.3 \times 0.7974) + (0.1 \times 0.7005) + (0.4 \times 0.7683) + (0.2 \times 0.9024) + 0.1}) = \sigma(0.8971) \approx 0.7103 \\
 a^{4}_{2} = \sigma(\textcolor{red}{(0.6 \times 0.7974) + (0.9 \times 0.7005) + (0.7 \times 0.7683) + (0.7 \times 0.9024) + 0.6}) = \sigma(0.9468) \approx 0.9468
 \end{split}
+$$
+Therefore we have,
+$$
+\phi^2 = \begin{bmatrix} 0.8971 \\ 0.9468 \\ \end{bmatrix}, ~~~ a^2 = \begin{bmatrix} 0.7103 \\ 0.9468 \end{bmatrix}
 $$
 
 ## Backpropagation
@@ -135,7 +150,7 @@ The following work and equations can be used for the cost function, $C(x)$ as de
 ### Kickstarting the algorithm
 To start the algorithm, we calculate the first value, $\delta^{N_l}$, where we are using our total number of layers as $N_l = 4$, and also dropping the $j$ component, we can write this out in matrix form.
 $$
-\delta^{4} = (a^{4} - o) \odot \sigma^{\prime} (z^4) =
+\delta^{4} = (a^{4} - o) \odot \sigma^{\prime} (\phi^4) =
 \Big(\begin{bmatrix} 0.7104 \\ 0.9468 \end{bmatrix} - \begin{bmatrix} 0 \\ 1 \end{bmatrix} \Big) \odot \sigma'\Big(\begin{bmatrix} 0.8971 \\ 2.8784 \end{bmatrix}\Big) =
 \begin{bmatrix} 0.1462 \\ -0.002681 \end{bmatrix}
 $$
@@ -184,8 +199,89 @@ $$
 
 
 ### Remaining Layers
-Now, by using the the $\delta$ recurrence relation, linking delta's in adjacent layers, we can use $\delta^4$ from above and calculate the remaining changes in the weights and biases. The calculation is as follows;
+Now, by using the the $\delta$ recurrence relation, linking delta's in adjacent layers, we can use $\delta^4$ from above and calculate the remaining changes in the weights and biases. The calculation is as follows (removing the index of $j$ again);
 
 $$
-...
+\delta^3 = ((w^{4})^{\top}\delta^{4}) \odot \sigma^{\prime}(\phi^3) = 
+ \begin{bmatrix} 
+0.3 & 0.6 \\ 
+0.1 & 0.9 \\ 
+0.4 & 0.7 \\ 
+0.2 & 0.7 \\ 
+\end{bmatrix}
+ \begin{bmatrix} 
+0.14615 \\
+-0.00268
+\end{bmatrix}
+\odot
+\sigma^{\prime}\Big( 
+ \begin{bmatrix} 
+1.3702 \\
+0.8495 \\
+1.1988 \\
+2.2246 \\
+\end{bmatrix}
+\Big)
+=
+\begin{bmatrix} 
+0.00682 \\
+0.00256 \\
+0.01007 \\
+0.00241 \\
+\end{bmatrix}
+$$
+The change in weights and biases are therefore
+$$
+\frac{\partial C}{\partial b^{3}} = \begin{bmatrix} 0.00682 \\ 0.00256 \\ 0.01007 \\ 0.00241 \\ \end{bmatrix}
+$$
+and,
+$$
+\frac{\partial C}{\partial w^{3}} = \delta^3 \cdot (a^{2})^{\top} = 
+\begin{bmatrix} 
+... & ... & ... & ... \\
+... & ... & ... & ... \\
+... & ... & ... & ... \\
+... & ... & ... & ... \\
+\end{bmatrix}
+$$
+The last iteration results in the following;
+$$
+\delta^2 = ((w^{3})^{\top}\delta^{3}) \odot \sigma^{\prime}(\phi^2) = 
+ \begin{bmatrix} 
+0.3 & 0.1 & 0.9 & 0.7 \\ 
+0.6 & 0.1 & 0.2 & 0.3 \\ 
+0.5 & 0.4 & 0.2 & 0.8 \\ 
+\end{bmatrix}
+ \begin{bmatrix} 
+0.00682 \\
+0.00256 \\
+0.01007 \\
+0.00241 \\
+\end{bmatrix}
+\odot
+\sigma^{\prime}\Big( 
+ \begin{bmatrix} 
+1.8 \\
+3.3 \\
+0.7 \\
+\end{bmatrix}
+\Big)
+=
+\begin{bmatrix} 
+0.00159 \\
+0.00024 \\
+0.00186 \\
+\end{bmatrix}
+$$
+$$
+\frac{\partial C}{\partial b^{2}} = \begin{bmatrix} 0.00159 \\ 0.00024 \\ 0.00186 \\ \end{bmatrix}
+$$
+and,
+$$
+\frac{\partial C}{\partial w^{2}} = \delta^3 \cdot (a^{2})^{\top} = 
+\begin{bmatrix} 
+0.0016 & 0.0048 \\
+0.0002 & 0.0007 \\
+0.0019 & 0.0056 \\
+\end{bmatrix}
 $$

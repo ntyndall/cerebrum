@@ -4,5 +4,5 @@
 \alias{print_digit}
 \title{Print Digit}
 \usage{
-print_digit(single.row)
+print_digit()
 }

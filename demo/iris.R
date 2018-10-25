@@ -33,5 +33,5 @@ result.frame <- irisnn %>%
     my.data = my.data,
     batchsize = 10,
     eta = 3.0,
-    epochs = 20
+    epochs = 15
   )

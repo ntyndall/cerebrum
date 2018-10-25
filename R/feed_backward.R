@@ -44,7 +44,7 @@ feed_backward <- function(forward, res, outputs = matrix(1)) {
       sig(prime = T)
 
     # Calculate the new delta value
-    nudel <- exampleNN$weights[[i + 1]] %>%
+    nudel <- res$weights[[i + 1]] %>%
       t %*%
       deltaL %>%
       matrixcalc::hadamard.prod(sprime)

@@ -3,7 +3,7 @@
 #' @export
 
 
-optimize_and_test <- function(res, my.data, batchsize = 10, eta = 3.0, epochs = 10) {
+optimize_and_test <- function(res, my.data, batchsize = 10, eta = 3.0, epochs = 10, progress = FALSE) {
 
   # Set up function for splitting up the data sets
   batches <- cerebrum::calc_batches(
@@ -18,7 +18,7 @@ optimize_and_test <- function(res, my.data, batchsize = 10, eta = 3.0, epochs = 
   for (i in 1:epochs) {
 
     # Sample the training data
-    splitup <- train.data %>%
+    splitup <- my.data$train.data %>%
       nrow %>%
       sample
 
@@ -33,11 +33,13 @@ optimize_and_test <- function(res, my.data, batchsize = 10, eta = 3.0, epochs = 
       floor
 
     # Set up progress bar
-    pb <- utils::txtProgressBar(
-      min = 0,
-      max = batchIter,
-      style = 3
-    )
+    if (progress) {
+      pb <- utils::txtProgressBar(
+        min = 0,
+        max = batchIter,
+        style = 3
+      )
+    }
 
     # Gradient descent for all batches
     for (k in 1:batchIter) {
@@ -48,7 +50,7 @@ optimize_and_test <- function(res, my.data, batchsize = 10, eta = 3.0, epochs = 
       )
 
       # Update progress bar
-      pb %>% utils::setTxtProgressBar(k)
+      if (progress) pb %>% utils::setTxtProgressBar(k)
     }
 
     # Now check out the test data (it doesnt need shuffled!)
@@ -76,7 +78,7 @@ optimize_and_test <- function(res, my.data, batchsize = 10, eta = 3.0, epochs = 
       `*`(100)
 
     # Print to screen
-    cat(paste0(" \n  |= Epoch ", i, " : ", totsum, "\n\n"))
+    cat(paste0(" \n  |= Epoch ", i, " : ", totsum))
 
     # Append to result frame
     result.frame %<>% rbind(
